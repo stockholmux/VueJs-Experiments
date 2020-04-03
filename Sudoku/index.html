@@ -5,9 +5,11 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vue.js in action</title>
+    <title>Redis Microservices Sudoku</title>
 
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="vue.js"></script>
+    <script src="vue-router.js"></script>
+
     <link href="style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet" />
 
@@ -20,22 +22,39 @@
     </header>
 
     <div id="app-sudoku">
-
-        <div class="buttons-container">
-            <button class="button" v-on:click="initializeGame()"><span>{{ initializeGameText }}</span></button>
-
+        <div class="buttons-container"  v-if="mid.length === 0">
+          Player 1 ID <input type="text" v-model="p1"/>
+          Player 2 ID <input type="text" v-model="p2" />
+          <button class="button" v-on:click="createGame(p1,p2)"><span>Create Game</span></button>
+        </div>
+        <div class="buttons-container" v-if="mid.length === 0">
+          <input type="text" v-model="mid" @input="changeMid(mid)" />
+          <button class="button" v-on:click="initializeGame()"><span>Join Existing Game</span></button>
+        </div>
+        <div class="buttons-container"  v-if="mid.length !== 0">
+          <button class="button" v-on:click="mid=''"><span>New Game</span></button>
+        </div>
+        <div class="buttons-container" v-if="mid.length !== 0">
             <transition name="fade">
                 <button class="button" v-on:click="evaluateGame()" v-if="isGameStarted"><span>{{ evaluateGameText }}</span></button>
             </transition>
         </div>
-
         <transition name="fade">
+            
+
             <div class="grid-sudoku" v-if="isGameStarted && !showAnswer">
 
-                <div v-for="row in sudokuMatrix" class="grid-row">
-                    <div v-for="cell in row" class="grid-cell">
-                        <transition-group tag="div" name="list-animation">
-                            <input type="text" v-bind:key="cell.num" v-model="cell.num" class="grid-cell-editor" />
+                <div v-for="(row, rowIndex) in sudokuMatrix" class="grid-row">
+                    <div v-for="(cell, colIndex) in row" class="grid-cell">
+                        <transition-group tag="div" name="list-animation"> 
+                            <input 
+                              type="text" 
+                              v-bind:key="cell.num" 
+                              :disabled='original[rowIndex][colIndex].num !== ""' 
+                              v-model="cell.num" 
+                              class="grid-cell-editor" 
+                              @input="makeMove(cell.num,rowIndex,colIndex)"
+                            />
                         </transition-group>
                     </div>
                 </div>

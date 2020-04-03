@@ -13,7 +13,7 @@ button:focus {
 body {
     display: grid;
     grid-template-rows: 150px 1fr;
-    background-color: #ff5252;
+    background-image: url('./redback.png');
     font-family: 'Dosis', sans-serif;
 }
 
@@ -110,7 +110,9 @@ header {
     font-size: 18px;
     transition: all ease 1.0s;
 }
-
+.grid-cell-editor[disabled="disabled"] {
+    color: red;
+}
 .answer {
     position: absolute;
     top: 0;
